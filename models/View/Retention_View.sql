@@ -1,26 +1,48 @@
-
-
 {{ config(materialized='view') }}
 
 with Retention_View as (
 
+    with cte as(
+        select 
+        s.Customer_Subscription_Key,
+        min(s.Start_Key) as Start_day,
+        max(s.End_Date_Key) as End_day
+        from {{ ref('Fact_Subscription') }} s 
+        group by 1
+    )
     select 
-    
-    from  {{ source('muniqlifebigcommerce','bc_order')}} o
-    join {{ ref('Dim_Customer') }} c on o.customer_id=c.customer_id
-    join {{ source('muniqlifebigcommerce','bc_order_line_items')}} l on l.order_id=o.order_id
-    join {{ ref('Dim_Product') }} p on p.variant_id=l.variant_id
-    join {{ source('Urlabs_DW_Amy','Dim_Date')}} dd_s on dd_s.full_date=DATE(o.order_created_date_time)
-    join {{ source('Urlabs_DW_Amy','Dim_Date')}} dd_e on dd_e.full_date= DATE(o.date_shipped)
-    join {{ source('Urlabs_DW_Amy','Dim_TimeOfDay')}} tt_s on tt_s.hour_24= EXTRACT(HOUR FROM (timestamp (o.order_created_date_time) ) )
-    join {{ source('Urlabs_DW_Amy','Dim_TimeOfDay')}} tt_e on tt_e.hour_24= EXTRACT(HOUR FROM (timestamp (o.date_shipped) ) )
-    join {{ ref('Dim_Order') }} do on do.order_id=o.order_id
-    join {{ ref('Dim_Discount') }} d on ifnull(o.coupon_id,0)=d.discount_id
-    join {{ source('muniqlifebigcommerce','bc_refund')}} rt on rt.order_id=o.order_id
-    left join {{ ref('Dim_Refund') }} f on ifnull(rt.refund_id,0)=f.refund_id
-    where o.order_id !=11031
+    c.customer as customer_id,
+    c.email,
+    s.is_live,
+    substring(cte.Start_day,0,4) as Start_Year,
+    substring(cte.Start_day,5,6) as Start_Month,
+    substring(cte.Start_day,8,9) as Start_Day,
+    case when s.is_live = true then 'N/A' else substring(cte.End_day,0,4) end as End_Year,
+    case when s.is_live = true then 'N/A' else substring(cte.End_day,5,6) end as End_Month,
+    case when s.is_live = true then 'N/A' else substring(cte.End_day,8,9) end as End_Day,
+    case when s.is_live != true and (s.End_Time_Key) in (0,1,2,3,4,5,6,7,8,9,10,11) then 'AM'
+    when s.is_live != true and (s.End_Time_Key) not in (0,1,2,3,4,5,6,7,8,9,10,11) then 'PM'
+    else 'N/A' end as End_Day_AM_PM,
+    case when s.is_live = true then 'N/A' else safe_cast(s.End_Time_Key as string)end as End_Hour,
+    -- case when p.product_name like '% Starter Pack' then 'Starter Pack'
+    -- when do.Subscribe ='One Time Purchase' then 'One-Time'
+    -- else 'Subscribe' end as Subscribe_type,
+    p.flavor,
+    do.Subscribe as Ship_Frequency,
+    p.quantity as Serving_Size,
+    p.product_name as Packaging,
+    -- CURRENT_DATE()-cast(cte.Start_day as DATE) as Days_from_sub_start,
+    -- case when s.is_live = true then 999999 else cast((cast(cte.End_day as DATE)-cast(cte.Start_day as DATE))as int64) end as Days_Active,
+    -- CONCAT(substring(cte.Start_day,0,4), '-', substring(cte.Start_day,5,6)) AS Cohort,
+    -- case when do.Subscribe != 'One Time Purchase' then true else false end as Valid
+    from  {{ ref('Fact_Subscription') }} s 
+    join {{ ref('Dim_Customer_Subscription') }} c on c.Customer_Subscription_Key=s.Customer_Subscription_Key
+    join cte on cte.Customer_Subscription_Key=s.Customer_Subscription_Key
+    join {{ ref('Fact_order') }} o on cast(s.order_id as int64)=o.order_id
+    join {{ ref('Dim_Product') }} p on o.Product_Key = p.Product_Key
+    join {{ ref('Dim_Order') }} do on do.Order_Key = o.Order_Key
 
     )
 
 select *
-from Fact_Subscription
+from Retention_View
