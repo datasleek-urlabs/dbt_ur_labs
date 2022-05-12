@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: Dim_Customer_Subscription
+    description: "A dimension for subscription fact only customer information"
+    columns:
+      - name: Customer_Subscription_Key
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  - name: Dim_Product_Subscription
+    description: "A dimension for subscription fact only product information"
+    columns:
+      - name: Product_Subscription_Key
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+     
+
+          
+  - name: Dim_TimeOfDay
+    description: "TimeOfDay Dim"
+    columns:
+      - name: TimeOfDay_Key
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  - name: Dim_Date
+    description: "Date Dim"
+    columns:
+      - name: Date_Key
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  - name: Dim_Customer
+    description: "Customer Dim"
+    columns:
+      - name: Customer_KEY
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  - name: Dim_Discount
+    description: "Discount Dim"
+    columns:
+      - name: Discount_KEY
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+  
+  - name: Dim_Refund
+    description: "Refund Dim"
+    columns:
+      - name: Refund_KEY
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+  
+  - name: Dim_Order
+    description: "Order Dim"
+    columns:
+      - name: Order_KEY
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+          
+  - name: Fact_Subscription
+    description: "Subscription Fact"
+
+  - name: Fact_Order
+    description: "Order Fact"
