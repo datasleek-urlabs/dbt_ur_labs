@@ -15,7 +15,7 @@ with Fact_Subscription as (
     f.Refund_Key,
     d.Discount_Key,
     p.Product_Key,
-    o.order_id,
+    cast(o.order_id as string) as order_id,
     l.order_line_item_id,
     o.payment_status,
     o.payment_method_type,

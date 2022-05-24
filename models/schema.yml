@@ -80,3 +80,6 @@ models:
 
   - name: Fact_Order
     description: "Order Fact"
+
+  - name: Retention_View
+    description: "Retention_View"
