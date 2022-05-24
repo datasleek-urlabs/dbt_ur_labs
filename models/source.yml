@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+
+  - name: muniqlifebigcommerce
+    database: muniq-277202
+    tables:
+      - name: bc_order
+      - name: bc_order_shipping_addresses
+      - name: bc_order_line_items
+      - name: bc_order_billing_addresses
+      - name: bc_customer
+      - name: bc_refund
+      - name: og_subs
+      - name: order
+
+  - name: muniq_custom_backend
+    database: muniq-277202
+    tables:
+      - name: order
+   
+    
+  - name: Urlabs_DW_Amy
+    database: muniq-277202
+    tables:
+      - name: Dim_Date
+      - name: Dim_TimeOfDay
+    
+ 
