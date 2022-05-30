@@ -5,7 +5,7 @@ models:
     description: "A dimension for subscription fact only customer information"
     columns:
       - name: Customer_Subscription_Key
-        description: "The primary key for this table"
+        description: "The primary key for Dim_Customer_Subscription table"
         tests:
           - unique
           - not_null
@@ -14,7 +14,7 @@ models:
     description: "A dimension for subscription fact only product information"
     columns:
       - name: Product_Subscription_Key
-        description: "The primary key for this table"
+        description: "The primary key for Dim_Product_Subscription table"
         tests:
           - unique
           - not_null
@@ -25,7 +25,7 @@ models:
     description: "TimeOfDay Dim"
     columns:
       - name: TimeOfDay_Key
-        description: "The primary key for this table"
+        description: "The primary key for Dim_TimeOfDay table"
         tests:
           - unique
           - not_null
@@ -34,7 +34,7 @@ models:
     description: "Date Dim"
     columns:
       - name: Date_Key
-        description: "The primary key for this table"
+        description: "The primary key for Dim_Date table"
         tests:
           - unique
           - not_null
@@ -43,16 +43,16 @@ models:
     description: "Customer Dim"
     columns:
       - name: Customer_KEY
-        description: "The primary key for this table"
+        description: "The primary key for Dim_Customer table"
         tests:
           - unique
           - not_null
 
   - name: Dim_Discount
-    description: "Discount Dim"
+    description: "Includes all discount (coupon data), left join with Order fact"
     columns:
       - name: Discount_KEY
-        description: "The primary key for this table"
+        description: "The primary key for Dim_Discount table"
         tests:
           - unique
           - not_null
@@ -61,7 +61,7 @@ models:
     description: "Refund Dim"
     columns:
       - name: Refund_KEY
-        description: "The primary key for this table"
+        description: "The primary key for Dim_Refund table"
         tests:
           - unique
           - not_null
@@ -70,16 +70,16 @@ models:
     description: "Order Dim"
     columns:
       - name: Order_KEY
-        description: "The primary key for this table"
+        description: "The primary key for Dim_Order table"
         tests:
           - unique
           - not_null
           
   - name: Fact_Subscription
-    description: "Subscription Fact"
+    description: "Subscription Fact records each subscript of each product in Urlabs"
 
   - name: Fact_Order
-    description: "Order Fact"
+    description: "Order Fact records each order being placed in Urlabs"
 
   - name: Retention_View
     description: "Retention_View"
