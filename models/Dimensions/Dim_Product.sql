@@ -3,7 +3,7 @@
 with Dim_Product as (
     with cte as(
     select 
-    id,
+    id as id,
     JSON_VALUE(trim(products,'[]'),'$.name') as product_name,
     JSON_VALUE(trim(products,'[]'),'$.variant_id') as variant_id,
     JSON_VALUE(trim(products,'[]'),'$.product_id') as product_id,
@@ -46,6 +46,7 @@ with Dim_Product as (
     'Vanilla Cr\u00e8me and Strawberry','Chocolate and Mocha Latte') then 
     JSON_VALUE(trim(products,'[]'),'$.product_options[0].display_value')
     
+    
     else JSON_VALUE(trim(products,'[]'),'$.product_options[1].display_value'
    ) end
 --    ) = 'Send every 6 weeks' , 'N/A', JSON_VALUE(trim(products,'[]'),'$.product_options[1].display_value'))
@@ -53,7 +54,7 @@ with Dim_Product as (
 -- ‘send 4 week'
     from 
     {{ source('muniqlifebigcommerce','order')}} 
-    where products is not null 
+    where products is not null
     )
     -- join cte on JSON_VALUE(trim(o.products,'[]'),'$.name') = cte.name
 
@@ -63,11 +64,19 @@ with Dim_Product as (
     cast(product_id as int64)as product_id,
     cast(variant_id as int64) as variant_id,
     ifnull(Quantity,'0') as Quantity, 
-    ifnull(lower(flavor),'n/a') as flavor
+    case when variant_id in ('429','423','460','461','546','542','519','387','537','520','462') and flavor='N/A' then 'Error' else lower(flavor) end as flavor
     from cte 
-    where variant_id != '0' and product_id!='140' 
+    where variant_id != '0' and product_id!='140' and product_name !='Default Product' and product_name != 'Chocolate'
+    group by 1,2,3,4,5,6 
+    having flavor!='Error'
     
 )
 
-select *
-from Dim_Product
+select 
+*
+from Dim_Product 
+-- group by 1 having count(*)>1
+
+
+
+-- select * from Dim_Product where variant_id=460
