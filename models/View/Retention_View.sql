@@ -41,6 +41,8 @@ with Retention_View as (
     join {{ ref('Fact_order') }} o on s.order_id=o.order_id
     join {{ ref('Dim_Product') }} p on o.Product_Key = p.Product_Key
     join {{ ref('Dim_Order') }} do on do.Order_Key = o.Order_Key
+    where do.initial_order=1
+
 
     )
 

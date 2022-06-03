@@ -52,6 +52,8 @@ with Dim_Order as (
     'Chocolate and Vanilla', 'vegan vanilla', 'Mocha latte', 'Mocha Latte', 'Strawberry', 'Chocolate, Vanilla and Strawberry', 
     'Vanilla Cr\u00e8me and Strawberry','Chocolate and Mocha Latte') 
     then JSON_VALUE(trim(ol.products,'[]'),'$.product_options[0].display_value')
+    when JSON_VALUE(trim(ol.products,'[]'),'$.product_options[1].display_value') in ('Send every 6 weeks','Send every 4 weeks')
+    then JSON_VALUE(trim(ol.products,'[]'),'$.product_options[1].display_value')
     when JSON_VALUE(trim(ol.products,'[]'),'$.product_options[2].display_value') in ('14','42','28')
     then JSON_VALUE(trim(ol.products,'[]'),'$.product_options[0].display_value') 
     else JSON_VALUE(trim(ol.products,'[]'),'$.product_options[2].display_value') end )='N/A' then 'One Time Purchase' else 
@@ -74,9 +76,9 @@ with Dim_Order as (
     from 
     {{ source('muniqlifebigcommerce','bc_order')}} o
     join cte on o.order_id=cte.order_id
-    join {{ source('muniqlifebigcommerce','bc_order_billing_addresses')}} b on o.order_id=b.order_id
+    left join {{ source('muniqlifebigcommerce','bc_order_billing_addresses')}} b on o.order_id=b.order_id
     left join {{ source('muniqlifebigcommerce','bc_order_shipping_addresses')}} s on o.order_id=s.order_id
-    join {{ source('muniqlifebigcommerce','order')}} ol on o.order_id=ol.id
+    left join {{ source('muniqlifebigcommerce','order')}} ol on o.order_id=ol.id
     
 )
 
