@@ -13,6 +13,7 @@ sources:
       - name: bc_refund
       - name: og_subs
       - name: order
+      - name: muniq-employees
 
   - name: muniq_custom_backend
     database: muniq-277202
@@ -23,7 +24,8 @@ sources:
   - name: Urlabs_DW_Amy
     database: muniq-277202
     tables:
-      - name: Dim_Date
+      # - name: Dim_Date
       - name: Dim_TimeOfDay
+      - name: stg_exclude_email
     
  

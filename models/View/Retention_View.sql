@@ -2,49 +2,58 @@
 
 with Retention_View as (
 
-    with cte as(
-        select 
-        s.Customer_Subscription_Key,
-        min(s.Start_Key) as Start_day,
-        max(s.End_Date_Key) as End_day
-        from {{ ref('Fact_Subscription') }} s 
-        group by 1
-    )
+    
     select 
-    c.customer as customer_id,
-    c.email,
-    s.is_live,
-    substring(cte.Start_day,0,4) as Start_Year,
-    substring(cte.Start_day,6,2) as Start_Month,
-    substring(cte.Start_day,9,2) as Start_Day,
-    case when s.is_live = true then 'N/A' else substring(cte.End_day,0,4) end as End_Year,
-    case when s.is_live = true then 'N/A' else substring(cte.End_day,6,2) end as End_Month,
-    case when s.is_live = true then 'N/A' else substring(cte.End_day,9,2) end as End_Day,
-    case when s.is_live != true and (s.End_Time_Key) in (0,1,2,3,4,5,6,7,8,9,10,11) then 'AM'
-    when s.is_live != true and (s.End_Time_Key) not in (0,1,2,3,4,5,6,7,8,9,10,11) then 'PM'
-    else 'N/A' end as End_Day_AM_PM,
-    case when s.is_live = true then 'N/A' else safe_cast(s.End_Time_Key as string)end as End_Hour,
-    case when p.product_name like '% Starter Pack' then 'Starter Pack'
-    when do.Subscribe ='One Time Purchase' then 'One-Time'
-    else 'Subscribe' end as Subscribe_type,
-    p.flavor,
-    do.Subscribe as Ship_Frequency,
-    p.quantity as Serving_Size,
-    p.product_name as Packaging,
-    DATE_DIFF(CURRENT_DATE(),cast(cte.Start_day as DATE),DAY) as Days_from_sub_start,
-    case when s.is_live = true then 999999 else DATE_DIFF(cast(cte.End_day as DATE),cast(cte.Start_day as DATE),DAY) end as Days_Active,
-    CONCAT(substring(cte.Start_day,0,4), '-', substring(cte.Start_day,6,2)) AS Cohort,
-    case when do.Subscribe != 'One Time Purchase' then true else false end as Valid
-    from  {{ ref('Fact_Subscription') }} s 
-    join {{ ref('Dim_Customer_Subscription') }} c on c.Customer_Subscription_Key=s.Customer_Subscription_Key
-    join cte on cte.Customer_Subscription_Key=s.Customer_Subscription_Key
-    join {{ ref('Fact_order') }} o on s.order_id=o.order_id
-    join {{ ref('Dim_Product') }} p on o.Product_Key = p.Product_Key
-    join {{ ref('Dim_Order') }} do on do.Order_Key = o.Order_Key
-    where do.initial_order=1
-
-
+    o.order_id,
+    s.customer_id,
+    s.is_live_customer,
+    s.Start_day_key,
+    s.End_day_key,
+    s.Days_from_sub_start,
+    s.Days_Active,
+    -- o.order_id as order_fact_order_id,
+    -- o.Order_type,
+    -- o.flavor,
+    -- o.Ship_Frequency,
+    -- o.Serving_Size,
+    -- -- o.Packaging,
+    max(o.product_is_bar) as product_is_bar,
+    max(o.product_is_fiber) as product_is_fiber,
+    max(o.product_is_shake) as product_is_shake,
+    max(o.product_is_starter_pack) as product_is_starter_pack,
+    max(case when o.Order_type='One-Time'then 1 else 0 end) as is_one_time,
+    max(case when o.Order_type='Starter Pack'then 1 else 0 end) as is_starter_pack,
+    max(case when o.Order_type='Subscribe'then 1 else 0 end) as is_subscription
+    -- o.Product_Category,
+    -- o.sku,
+    -- o.Valid,
+    -- o.Product_Category,
+    -- s.sku,
+    -- s.Start_Year,
+    -- s.Start_Month,
+    -- s.Start_Day,
+    -- s.End_Year,
+    -- s.End_Month,
+    -- s.End_Day,
+    -- s.End_Day_AM_PM,
+    -- s.End_Hour,
+    
+    -- sum(s.customer_id) over(s.Start_day_key) as Daily_Cohort
+    from  {{ ref('Subscription_Fact_Report') }} s 
+    join {{ ref('Subscription_Initial_Report') }} o on s.customer_id = o.customer_id
+    group by 1,2,3,4,5,6,7
+    -- group by s.customer_id
+    -- s.order_id=o.order_id and s.sku=o.sku
+    -- where do.initial_order=1 
+    -- and flavor!='n/a'
+    -- having Subscribe_type!='One-Time'
     )
-
-select *
-from Retention_View
+select * from Retention_View 
+-- where is_one_time=1
+-- where customer_id=11333
+-- where order_id='226402'
+-- select count(*) 
+-- select order_id1, count(*)
+-- from Retention_View 
+-- group by order_id1
+-- having count(*)>1

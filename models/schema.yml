@@ -18,8 +18,13 @@ models:
         tests:
           - unique
           - not_null
-     
 
+
+  - name: stg_product
+    description: "Staging table for product for subscription fact"
+
+  - name: stg_order_product
+    description: "Staging table for product for order fact"
           
   - name: Dim_TimeOfDay
     description: "TimeOfDay Dim"
@@ -56,7 +61,16 @@ models:
         tests:
           - unique
           - not_null
+
+  - name: Order_Fact_Report
+    description: "Order_Fact_Report"
+    
+  - name: Subscription_Fact_Report
+    description: "Subscription_Fact_Report"
   
+  - name: Subscription_Initial_Report
+    description: "Subscription_Initial_Report"
+
   - name: Dim_Refund
     description: "Refund Dim"
     columns:
