@@ -5,7 +5,6 @@ with Dim_Customer_Subscription as (
     select 
     distinct {{ dbt_utils.surrogate_key(['customer']) }} Customer_Subscription_Key,
     customer,
-    -- email,
     first_name,
     last_name
     from 
@@ -18,4 +17,3 @@ with Dim_Customer_Subscription as (
 
 select *
 from Dim_Customer_Subscription 
--- where customer='56350'

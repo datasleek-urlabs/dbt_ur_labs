@@ -114,16 +114,10 @@
     when JSON_VALUE(pro,'$.name') like '%Bundle%' then 'Bundle'
     else 'Others'
     end as Product_Category
-        from 
-        base,
-        unnest(products) as pro
-        where base.products is not null and
-        CONCAT(cast(JSON_VALUE(pro,'$.product_id') as string), '_',cast(JSON_VALUE(pro,'$.sku')as string)) is not null
+    from 
+    base,
+    unnest(products) as pro
+    where base.products is not null and
+    CONCAT(cast(JSON_VALUE(pro,'$.product_id') as string), '_',cast(JSON_VALUE(pro,'$.sku')as string)) is not null
 
-        
-        -- and JSON_VALUE(pro,'$.sku')='10201711'
-        -- and JSON_VALUE(pro,'$.name') like 'Balanced%'
-        -- and JSON_VALUE(pro,'$.sku') ='20201601'
-        -- '10201613'
-        -- and JSON_VALUE(pro,'$.name')  like '%Shake%'
-
+       

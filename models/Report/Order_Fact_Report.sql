@@ -38,10 +38,3 @@ with Order_Fact_Report as (
 
 select *
 from Order_Fact_Report 
--- group by 1 having count(*)>1
--- where is_starter_pack =1 
--- where order_id='226402'
--- where customer_id = 49693
-
--- -- order_id='where order_id='58966''
--- where order_id='33479'

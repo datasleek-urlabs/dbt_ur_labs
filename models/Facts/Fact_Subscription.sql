@@ -27,4 +27,3 @@ with Fact_Subscription as (
 
 select *
 from Fact_Subscription  
--- where customer='52020'

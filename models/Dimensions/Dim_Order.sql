@@ -117,12 +117,7 @@ with Dim_Order as (
     left join {{ source('muniqlifebigcommerce','bc_order_billing_addresses')}} b on o.order_id=b.order_id
     left join {{ source('muniqlifebigcommerce','bc_order_shipping_addresses')}} s on o.order_id=s.order_id
     left join {{ source('muniqlifebigcommerce','order')}} ol on o.order_id=ol.id
-    
-    
-    
 )
 
 select *
 from Dim_Order
-where order_id=212521
---  where billing_email='debrakm@yahoo.com'
