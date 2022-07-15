@@ -10,21 +10,11 @@ models:
           - unique
           - not_null
 
-  - name: Dim_Product_Subscription
-    description: "A dimension for subscription fact only product information"
-    columns:
-      - name: Product_Subscription_Key
-        description: "The primary key for Dim_Product_Subscription table"
-        tests:
-          - unique
-          - not_null
-
-
   - name: stg_product
-    description: "Staging table for product for subscription fact"
+    description: "Staging table for product for subscription fact. Used for extract JSON query for product dim. Mainly contain flavor and Serving size"
 
   - name: stg_order_product
-    description: "Staging table for product for order fact"
+    description: "Staging table for product for order fact. For joining media purpose"
           
   - name: Dim_TimeOfDay
     description: "TimeOfDay Dim"
@@ -63,13 +53,10 @@ models:
           - not_null
 
   - name: Order_Fact_Report
-    description: "Order_Fact_Report"
+    description: "Order_Fact_Report: Each customer's initial valid order detail. Each row is by unique customer."
     
   - name: Subscription_Fact_Report
     description: "Subscription_Fact_Report"
-  
-  - name: Subscription_Initial_Report
-    description: "Subscription_Initial_Report"
 
   - name: Dim_Refund
     description: "Refund Dim"
@@ -96,4 +83,4 @@ models:
     description: "Order Fact records each order being placed in Urlabs"
 
   - name: Retention_View
-    description: "Retention_View"
+    description: "Retention_View. Joining Fact Order Report and Subscrition Report together by customer. Output in customer level. Provide detail of each subscrition customer's first initial valid order detail."
