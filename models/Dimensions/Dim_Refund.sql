@@ -10,8 +10,6 @@ with Dim_Refund as (
     last_updated_datetime
     from 
     {{ source('muniqlifebigcommerce','bc_refund')}}
-  
-    
 )
 
 select *

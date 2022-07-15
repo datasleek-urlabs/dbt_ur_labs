@@ -4,7 +4,6 @@ with Retention_View as (
 
     
     select 
-    
     s.customer_id,
     s.is_live_customer,
     s.Start_day_key,
@@ -23,12 +22,4 @@ with Retention_View as (
     join {{ ref('Order_Fact_Report') }} o on cast(s.customer_id as string) = cast(o.customer_id as string)
     group by 1,2,3,4,5,6,7
     )
-select * from Retention_View 
--- where is_one_time=1
--- where customer_id=16323
--- where order_id='226402'
--- select count(*) 
--- select order_id1, count(*)
--- from Retention_View 
--- group by order_id1
--- having count(*)>1
+    select * from Retention_View 
