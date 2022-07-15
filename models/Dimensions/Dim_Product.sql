@@ -44,10 +44,12 @@ with Dim_Product as (
     product_is_shake,
     product_is_starter_pack
     from cte 
-    where flavor not like '%chocolate peanut butter%' and flavor not like '%vanilla crème%'
+    where flavor not like '%chocolate peanut butter%' and flavor not like '%vanilla crème%' 
+    -- and flavor like '%Mocha Latte%'
 )
 
 select * from Dim_Product 
+-- where order_sku='10201109-3'
 -- select product_key, count(*) from Dim_Product group by 1 having count(*)>1
 -- select * from Dim_Product where product_key='d9b871278c92c84d8518475957adf61f'
 -- where Product_Key= 'd1a9f312c913e18f5048964269bba119'

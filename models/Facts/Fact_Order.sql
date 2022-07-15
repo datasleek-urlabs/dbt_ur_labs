@@ -52,7 +52,7 @@ with Fact_Order as (
 
 select *
 from Fact_Order 
--- where order_id='226451'
--- where customer_id=11333
+-- where order_id='212521'
+where customer_id =4503
 -- order by order_Date_Key limit 1
 -- order by order_Date_Key

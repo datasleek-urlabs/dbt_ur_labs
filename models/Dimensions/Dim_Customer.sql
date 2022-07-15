@@ -24,4 +24,5 @@ with Dim_Customer as (
 )
 
 select *
-from Dim_Customer
+from Dim_Customer 
+-- where customer_id='56468'

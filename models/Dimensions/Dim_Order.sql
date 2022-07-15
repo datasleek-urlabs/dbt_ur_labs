@@ -1,11 +1,21 @@
 {{ config(materialized='table') }}
 
 with Dim_Order as (
-    with cte as (
+
+    with valid_check as(
         select order_id,
-        rank() over(partition by customer_id order by order_created_date_time ASC) as rank 
+        case when order_status in ('Declined', 'Pending','Incomplete','Cancelled') then 0 else 1 end as order_valid_check
         from 
     {{ source('muniqlifebigcommerce','bc_order')}}
+    )
+    ,
+    cte as (
+        select o.order_id,
+        
+        rank() over(partition by customer_id order by order_created_date_time ASC) as rank 
+        from 
+    {{ source('muniqlifebigcommerce','bc_order')}} o join valid_check v on v.order_id=o.order_id
+    where order_valid_check =1
     )
     ,
    freq_stage as (
@@ -68,6 +78,7 @@ with Dim_Order as (
     o.order_id,
     o.order_status_id,
     o.order_status,
+    v.order_valid_check,
     o.order_archived,
     case when cte.rank= 1 then 1 else 0 end as initial_order,
     case when cte.rank= 1 then 0 else 1 end as reorder_order,
@@ -102,15 +113,16 @@ with Dim_Order as (
     {{ source('muniqlifebigcommerce','bc_order')}} o
     join cte on o.order_id=cte.order_id
     join freq on freq.order_id=o.order_id
+    join valid_check v on v.order_id=o.order_id
     left join {{ source('muniqlifebigcommerce','bc_order_billing_addresses')}} b on o.order_id=b.order_id
     left join {{ source('muniqlifebigcommerce','bc_order_shipping_addresses')}} s on o.order_id=s.order_id
     left join {{ source('muniqlifebigcommerce','order')}} ol on o.order_id=ol.id
-    where order_status not in ('Declined', 'Pending','Incomplete','Cancelled')
+    
     
     
 )
 
 select *
 from Dim_Order
--- where order_id=149159
+where order_id=212521
 --  where billing_email='debrakm@yahoo.com'

@@ -3,6 +3,7 @@
  with base as (
     select json_extract_array(products, '$') as products from `muniq-277202`.`muniqlifebigcommerce`.`order` 
     )
+
     select distinct
         JSON_VALUE(pro,'$.name') as product_name,
     JSON_VALUE(pro,'$.variant_id') as variant_id,
@@ -118,9 +119,10 @@
         unnest(products) as pro
         where base.products is not null and
         CONCAT(cast(JSON_VALUE(pro,'$.product_id') as string), '_',cast(JSON_VALUE(pro,'$.sku')as string)) is not null
+
         
         -- and JSON_VALUE(pro,'$.sku')='10201711'
-        and JSON_VALUE(pro,'$.name') like 'Balanced%'
+        -- and JSON_VALUE(pro,'$.name') like 'Balanced%'
         -- and JSON_VALUE(pro,'$.sku') ='20201601'
         -- '10201613'
         -- and JSON_VALUE(pro,'$.name')  like '%Shake%'
