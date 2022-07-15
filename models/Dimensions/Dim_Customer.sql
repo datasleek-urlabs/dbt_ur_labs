@@ -16,9 +16,13 @@ with Dim_Customer as (
     c.store_credit_in_USD as credit
     from 
     {{ source('muniqlifebigcommerce','bc_customer')}} c
-    join {{ source('muniqlifebigcommerce','bc_order')}} o on o.customer_id=c.customer_id
- 
+    -- join {{ source('muniqlifebigcommerce','bc_order')}} o on o.customer_id=c.customer_id
+    where c.email not in (
+        select email from {{ source('Urlabs_DW_Amy','stg_exclude_email')}} 
+    )
+    
 )
 
 select *
-from Dim_Customer
+from Dim_Customer 
+-- where customer_id='56468'
