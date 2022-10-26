@@ -45,7 +45,7 @@ with Dim_Order as (
     ,'Chocolate Brownie, Peanut Butter Chocolate, and Strawberry Almond','Strawberry Almond','Peanut Butter Chocolate',
     'Chocolate Brownie and Peanut Butter Chocolate','Chocolate Brownie','Chocolate Brownie and Strawberry Almond','Chocolate Peanut Butter and Strawberry Almond') 
     then JSON_VALUE(pro, '$.product_options[0].display_value')
-    when JSON_VALUE(pro,'$.product_options[2].display_value') in ('14','42','28')
+    when JSON_VALUE(pro,'$.product_options[2].display_value') in ('14','28','42')
     then JSON_VALUE(pro,'$.product_options[0].display_value') 
     else JSON_VALUE(pro,'$.product_options[2].display_value') end )='N/A' then 'One Time Purchase' else 
     (Case when JSON_VALUE(pro,'$.product_options[2].display_value') is null 
@@ -66,7 +66,7 @@ with Dim_Order as (
     ,'Chocolate Brownie, Peanut Butter Chocolate, and Strawberry Almond','Strawberry Almond','Peanut Butter Chocolate',
     'Chocolate Brownie and Peanut Butter Chocolate','Chocolate Brownie','Chocolate Brownie and Strawberry Almond','Chocolate Peanut Butter and Strawberry Almond') 
     then JSON_VALUE(pro,'$.product_options[0].display_value')
-    when JSON_VALUE(pro,'$.product_options[2].display_value') in ('14','42','28')
+    when JSON_VALUE(pro,'$.product_options[2].display_value') in ('14','28','42')
     then JSON_VALUE(pro,'$.product_options[0].display_value') 
     else JSON_VALUE(pro,'$.product_options[2].display_value') end) end
     as subscribe

@@ -26,6 +26,7 @@ with Order_Fact_Report as (
     max(case when cte.Order_type='One-Time'then 1 else 0 end) as is_one_time,
     max(case when cte.Order_type='Starter Pack'then 1 else 0 end) as is_starter_pack,
     max(case when cte.Order_type='Subscribe'then 1 else 0 end) as is_subscription
+
     from
     {{ ref('Fact_Order') }} o 
     join cte on cte.order_id=o.order_id and cte.sku=o.sku
@@ -36,5 +37,14 @@ with Order_Fact_Report as (
     group by 1,2,3,4,5,6
     )
 
-select *
+select *,
+case 
+when product_is_shake = 1 and product_is_bar=0 and product_is_fiber=0 and is_starter_pack=0 then 'Shake_Only' 
+when product_is_shake = 0 and product_is_bar=1 and product_is_fiber=0 and is_starter_pack=0 then 'Bar_Only' 
+when product_is_shake = 0 and product_is_bar=0 and product_is_fiber=1 and is_starter_pack=0 then 'Fiber_Only' 
+when product_is_shake = 1 and product_is_bar=1 and product_is_fiber=0 and is_starter_pack=0 then 'Shake_Bar_Bundle' 
+when product_is_shake = 1 and product_is_fiber=1 and product_is_bar=0 and product_is_starter_pack=0 then 'Other_Bundle'
+when product_is_bar = 1 and product_is_fiber =1 and product_is_shake=0 and product_is_starter_pack =0  then'Other_Bundle' 
+when product_is_bar =1 and product_is_fiber =1 and product_is_shake =1 and product_is_starter_pack =0 then 'Other_Bundle' end
+as Customer_basket_type
 from Order_Fact_Report 
